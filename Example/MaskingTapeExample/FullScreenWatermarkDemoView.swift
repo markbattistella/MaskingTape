@@ -41,9 +41,9 @@ struct FullScreenWatermarkDemoView: View {
       }
       .padding()
     }
-    .background(Color(uiColor: .systemGroupedBackground))
+    .background(groupedBackgroundColor)
     .navigationTitle("Full-Screen Watermark")
-    .navigationBarTitleDisplayMode(.inline)
+    .exampleInlineNavTitle()
   }
 
   @ViewBuilder
@@ -56,7 +56,15 @@ struct FullScreenWatermarkDemoView: View {
     }
     .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(.background, in: .rect(cornerRadius: 16))
+      .background(.background, in: .rect(cornerRadius: 16))
+  }
+
+  private var groupedBackgroundColor: Color {
+#if os(macOS)
+    Color(nsColor: .windowBackgroundColor)
+#else
+    Color(uiColor: .systemGroupedBackground)
+#endif
   }
 }
 

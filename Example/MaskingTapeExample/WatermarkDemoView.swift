@@ -5,7 +5,9 @@
 //
 
 import SwiftUI
-import UIKit         
+#if canImport(UIKit)
+import UIKit
+#endif
 import MaskingTape
 
 /// Demonstrates reactive and always-visible watermark overlays.
@@ -34,6 +36,7 @@ struct WatermarkDemoView: View {
         Text("Capture State")
       }
       .task { @MainActor in
+#if canImport(UIKit)
         if let screen = currentCaptureScreen() {
           isCapturing = screen.isCaptured
         }
@@ -44,6 +47,9 @@ struct WatermarkDemoView: View {
             isCapturing = screen.isCaptured
           }
         }
+#else
+        isCapturing = false
+#endif
       }
 
       // MARK: - Reactive watermark
@@ -122,7 +128,7 @@ struct WatermarkDemoView: View {
       }
     }
     .navigationTitle("Capture Watermark")
-    .navigationBarTitleDisplayMode(.large)
+    .exampleLargeNavTitle()
   }
 
   // MARK: - Helpers
@@ -138,6 +144,7 @@ struct WatermarkDemoView: View {
   }
 }
 
+#if canImport(UIKit)
 @MainActor
 /// Resolves the most relevant screen for capture-state checks in the demo app.
 private func currentCaptureScreen() -> UIScreen? {
@@ -149,6 +156,7 @@ private func currentCaptureScreen() -> UIScreen? {
     ?? windowScenes.first(where: { $0.activationState == .foregroundInactive })?.screen
     ?? windowScenes.first?.screen
 }
+#endif
 
 // MARK: - Supporting Views
 

@@ -85,7 +85,7 @@ struct ShieldDemoView: View {
       }
     }
     .navigationTitle("secureCapture()")
-    .navigationBarTitleDisplayMode(.large)
+    .exampleLargeNavTitle()
   }
 
   // MARK: - Helpers

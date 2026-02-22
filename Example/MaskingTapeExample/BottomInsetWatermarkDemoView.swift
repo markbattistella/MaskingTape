@@ -5,7 +5,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Demonstrates a capture-reactive bottom inset watermark that compresses content while recording/mirroring.
 struct BottomInsetWatermarkDemoView: View {
@@ -38,7 +40,7 @@ struct BottomInsetWatermarkDemoView: View {
       }
       .padding()
     }
-    .background(Color(uiColor: .systemGroupedBackground))
+    .background(groupedBackgroundColor)
     .safeAreaInset(edge: .bottom, spacing: 0) {
       if isCapturing {
         CaptureInsetWatermarkBar()
@@ -47,6 +49,7 @@ struct BottomInsetWatermarkDemoView: View {
     }
     .animation(.spring(duration: 0.28), value: isCapturing)
     .task { @MainActor in
+#if canImport(UIKit)
       if let screen = currentCaptureScreen() {
         isCapturing = screen.isCaptured
       }
@@ -58,9 +61,20 @@ struct BottomInsetWatermarkDemoView: View {
           isCapturing = screen.isCaptured
         }
       }
+#else
+      isCapturing = false
+#endif
     }
     .navigationTitle("Inset Watermark")
-    .navigationBarTitleDisplayMode(.inline)
+    .exampleInlineNavTitle()
+  }
+
+  private var groupedBackgroundColor: Color {
+#if os(macOS)
+    Color(nsColor: .windowBackgroundColor)
+#else
+    Color(uiColor: .systemGroupedBackground)
+#endif
   }
 
   private var header: some View {
@@ -113,6 +127,7 @@ private struct CaptureInsetWatermarkBar: View {
   }
 }
 
+#if canImport(UIKit)
 @MainActor
 /// Resolves the active screen used for capture-state checks in the inset watermark demo.
 private func currentCaptureScreen() -> UIScreen? {
@@ -124,3 +139,4 @@ private func currentCaptureScreen() -> UIScreen? {
     ?? windowScenes.first(where: { $0.activationState == .foregroundInactive })?.screen
     ?? windowScenes.first?.screen
 }
+#endif

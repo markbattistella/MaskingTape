@@ -43,9 +43,9 @@ struct FullScreenShieldDemoView: View {
       }
       .padding()
     }
-    .background(Color(uiColor: .systemGroupedBackground))
+    .background(groupedBackgroundColor)
     .navigationTitle("Full-Screen Mask")
-    .navigationBarTitleDisplayMode(.inline)
+    .exampleInlineNavTitle()
   }
 
   @ViewBuilder
@@ -58,7 +58,15 @@ struct FullScreenShieldDemoView: View {
     }
     .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(.background, in: .rect(cornerRadius: 16))
+      .background(.background, in: .rect(cornerRadius: 16))
+  }
+
+  private var groupedBackgroundColor: Color {
+#if os(macOS)
+    Color(nsColor: .windowBackgroundColor)
+#else
+    Color(uiColor: .systemGroupedBackground)
+#endif
   }
 }
 
@@ -66,7 +74,7 @@ struct FullScreenShieldDemoView: View {
 struct FullScreenMaskOverlay: View {
   var body: some View {
     ZStack {
-      Color(uiColor: .systemBackground)
+      systemBackgroundColor
         .ignoresSafeArea()
 
       VStack(spacing: 12) {
@@ -84,5 +92,13 @@ struct FullScreenMaskOverlay: View {
       .background(.quaternary, in: .rect(cornerRadius: 20))
       .padding(24)
     }
+  }
+
+  private var systemBackgroundColor: Color {
+#if os(macOS)
+    Color(nsColor: .windowBackgroundColor)
+#else
+    Color(uiColor: .systemBackground)
+#endif
   }
 }
