@@ -55,7 +55,7 @@ struct WatermarkDemoView: View {
         )
 
         DocumentView()
-          .screenWatermark {
+          .watermark {
             WatermarkStamp()
           }
 
@@ -64,7 +64,7 @@ struct WatermarkDemoView: View {
       } footer: {
         Text(
           """
-          .screenWatermark() observes UIScreen.capturedDidChangeNotification via \
+          .watermark { ... } observes UIScreen.capturedDidChangeNotification via \
           an async stream — no polling. The overlay appears the moment capture \
           starts and disappears the moment it stops.
           """
@@ -75,7 +75,7 @@ struct WatermarkDemoView: View {
 
       Section {
         DocumentView()
-          .screenWatermark(alwaysVisible: true) {
+          .overlay {
             WatermarkStamp()
           }
 
@@ -84,9 +84,8 @@ struct WatermarkDemoView: View {
       } footer: {
         Text(
           """
-          Use alwaysVisible: true for permanent branding or on macOS, where \
-          capture state cannot be detected without prompting the user for \
-          Screen Recording permission.
+          For a permanent watermark, use native SwiftUI `.overlay { ... }`.
+          This keeps MaskingTape focused on capture-aware behavior.
           """
         )
       }
@@ -96,11 +95,11 @@ struct WatermarkDemoView: View {
       Section {
         callout(
           icon: "info.circle",
-          message: "You can chain both modifiers: shield the content AND watermark whatever leaks through (e.g. the replacement view)."
+          message: "You can chain both behaviors: secure the content and add a normal SwiftUI overlay to the replacement view."
         )
 
         DocumentView()
-          .screenShield {
+          .secureCapture {
             // This replacement is what appears in the capture output.
             // Watermark it too for belt-and-suspenders coverage.
             Color.secondary.opacity(0.1)
@@ -113,7 +112,7 @@ struct WatermarkDemoView: View {
                 }
                 .foregroundStyle(.secondary)
               }
-              .screenWatermark(alwaysVisible: true) {
+              .overlay {
                 WatermarkStamp()
               }
           }
@@ -122,7 +121,7 @@ struct WatermarkDemoView: View {
         Text("Combined Usage")
       }
     }
-    .navigationTitle("screenWatermark()")
+    .navigationTitle("Capture Watermark")
     .navigationBarTitleDisplayMode(.large)
   }
 

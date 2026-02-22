@@ -26,6 +26,7 @@ import UIKit
 struct ScreenWatermarkModifier<Watermark: View>: ViewModifier {
 
   let alwaysVisible: Bool
+  let alignment: Alignment
   let overlay: () -> Watermark
 
   // UIScreen.isCaptured is available on iOS 11+ and tvOS 11+.
@@ -37,7 +38,7 @@ struct ScreenWatermarkModifier<Watermark: View>: ViewModifier {
   func body(content: Content) -> some View {
     #if os(iOS) || os(tvOS)
     content
-      .overlay(alignment: .center) {
+      .overlay(alignment: alignment) {
         if alwaysVisible || isCaptured {
           overlay()
             .allowsHitTesting(false)
@@ -66,7 +67,7 @@ struct ScreenWatermarkModifier<Watermark: View>: ViewModifier {
     // visionOS: spatial captures work differently.
     // All three fall back to alwaysVisible-only behaviour.
     content
-      .overlay(alignment: .center) {
+      .overlay(alignment: alignment) {
         if alwaysVisible {
           overlay()
             .allowsHitTesting(false)

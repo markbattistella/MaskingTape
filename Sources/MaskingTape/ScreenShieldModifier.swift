@@ -28,7 +28,7 @@ struct ScreenShieldModifier<Replacement: View>: ViewModifier {
       .background(WindowShieldView())
     #else
     // tvOS: UITextField internal layout differs; the secure-layer trick is
-    //        unreliable. Pass through — use screenWatermark() instead.
+    //        unreliable. Pass through — use watermark() instead.
     // watchOS: No screenshots exist on Apple Watch. Pass through.
     // visionOS: Spatial captures work differently. Pass through.
     content

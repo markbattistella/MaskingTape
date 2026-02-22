@@ -21,14 +21,14 @@ struct ShieldDemoView: View {
         )
 
         CardView()
-          .screenShield()
+          .secureCapture()
 
       } header: {
         Text("Basic Shield")
       } footer: {
         Text(
           """
-          .screenShield() embeds the view inside a UIKit secure text field layer. \
+          .secureCapture() embeds the view inside a UIKit secure text field layer. \
           iOS automatically excludes that layer from screenshots, Control Centre \
           recordings, QuickTime mirroring, and AirPlay output.
           """
@@ -44,7 +44,7 @@ struct ShieldDemoView: View {
         )
 
         CardView()
-          .screenShield {
+          .secureCapture {
             HStack(spacing: 12) {
               Image(systemName: "lock.fill")
                 .font(.title2)
@@ -78,13 +78,13 @@ struct ShieldDemoView: View {
       Section {
         callout(
           icon: "exclamationmark.triangle",
-          message: "On macOS, screenShield() sets the entire window's sharing type — all content in the window is protected, not just the modified view."
+          message: "On macOS, secureCapture() sets the entire window's sharing type — all content in the window is protected, not just the modified view."
         )
       } header: {
         Text("macOS Note")
       }
     }
-    .navigationTitle("screenShield()")
+    .navigationTitle("secureCapture()")
     .navigationBarTitleDisplayMode(.large)
   }
 

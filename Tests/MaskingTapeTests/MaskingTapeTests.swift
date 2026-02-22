@@ -48,7 +48,7 @@ struct MaskingTapeAPITests {
     }
   }
 
-  // MARK: screenWatermark()
+  // MARK: Legacy screenWatermark()
 
   @Test("screenWatermark(overlay:) compiles with default alwaysVisible")
   func screenWatermarkDefault() {
@@ -58,7 +58,7 @@ struct MaskingTapeAPITests {
       }
   }
 
-  @Test("screenWatermark(alwaysVisible:overlay:) compiles with explicit flag")
+  @Test("screenWatermark(alwaysVisible:overlay:) compiles with explicit flag (legacy)")
   func screenWatermarkAlwaysVisible() {
     let _ = Text("Document")
       .screenWatermark(alwaysVisible: true) {
@@ -66,7 +66,7 @@ struct MaskingTapeAPITests {
       }
   }
 
-  @Test("screenWatermark(alwaysVisible:overlay:) compiles when disabled")
+  @Test("screenWatermark(alwaysVisible:overlay:) compiles when disabled (legacy)")
   func screenWatermarkNotVisible() {
     let _ = Text("Document")
       .screenWatermark(alwaysVisible: false) {
@@ -76,12 +76,12 @@ struct MaskingTapeAPITests {
 
   // MARK: Chaining
 
-  @Test("screenShield() and screenWatermark() can be chained")
+  @Test("secureCapture() and watermark() can be chained")
   func chainedModifiers() {
-    // screenShield prevents capture; screenWatermark adds a persistent brand mark.
+    // secureCapture prevents capture; watermark adds a capture-reactive brand mark.
     let _ = Text("Sensitive document")
-      .screenShield()
-      .screenWatermark(alwaysVisible: true) {
+      .secureCapture()
+      .watermark {
         Text("© Acme Corp")
           .foregroundStyle(.secondary)
       }
@@ -93,12 +93,12 @@ struct MaskingTapeAPITests {
       Text("Name")
 
       Text("4111 1111 1111 1111")
-        .screenShield {
+        .secureCapture {
           Text("Card number hidden")
         }
 
       Text("Footer")
-        .screenWatermark {
+        .watermark {
           Image(systemName: "lock.shield")
         }
     }
@@ -120,10 +120,18 @@ struct MaskingTapeAPITests {
       }
   }
 
-  @Test("watermark(overlay:) compiles")
+  @Test("watermark(overlay:) compiles as a capture-reactive overlay")
   func watermarkOverlay() {
     let _ = Text("Shareable")
       .watermark {
+        Text("CONFIDENTIAL")
+      }
+  }
+
+  @Test("Always-visible watermark uses native SwiftUI overlay")
+  func alwaysVisibleWatermarkViaOverlay() {
+    let _ = Text("Shareable")
+      .overlay {
         Text("CONFIDENTIAL")
       }
   }

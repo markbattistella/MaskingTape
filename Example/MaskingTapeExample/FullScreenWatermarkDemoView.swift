@@ -13,7 +13,7 @@ struct FullScreenWatermarkDemoView: View {
       VStack(alignment: .leading, spacing: 16) {
         header(
           title: "Whole-Screen Watermark",
-          subtitle: "The watermark is applied at the NavigationStack level, so it stays screen-sized while the content scrolls underneath."
+          subtitle: "Start a screen recording or mirroring session. The capture-reactive watermark is applied at the NavigationStack level, so it stays screen-sized while content scrolls underneath."
         )
 
         ForEach(1...20, id: \.self) { index in

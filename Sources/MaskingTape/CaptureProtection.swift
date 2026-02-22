@@ -45,17 +45,18 @@ public struct SecureView<Content: View>: View {
     }
 }
 
-/// A regular watermark wrapper that renders content and an overlay together.
+/// A capture-reactive watermark wrapper.
 ///
-/// - Note: A capture-only watermark cannot be implemented with the iOS secure text
-/// field trick because secure-container content is omitted from captures.
+/// The overlay is shown only while screen capture is active (for example screen
+/// recording or mirroring on iOS/tvOS). For always-visible overlays, use SwiftUI's
+/// native `.overlay`.
 public struct WatermarkView<Content: View, Overlay: View>: View {
 
     private let content: () -> Content
     private let overlay: () -> Overlay
     private let alignment: Alignment
 
-    /// Creates a watermark wrapper that overlays `overlay` on top of `content`.
+    /// Creates a capture-reactive watermark wrapper.
     public init(
         alignment: Alignment = .center,
         @ViewBuilder content: @escaping () -> Content,
@@ -68,11 +69,13 @@ public struct WatermarkView<Content: View, Overlay: View>: View {
 
     public var body: some View {
         content()
-            .overlay(alignment: alignment) {
-                overlay()
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
-            }
+            .modifier(
+                ScreenWatermarkModifier(
+                    alwaysVisible: false,
+                    alignment: alignment,
+                    overlay: overlay
+                )
+            )
     }
 }
 
@@ -98,10 +101,9 @@ public extension View {
         )
     }
 
-    /// Composites a watermark overlay on top of this view.
+    /// Overlays a watermark only while screen capture is active.
     ///
-    /// This is a standard overlay (visible in the live UI and in any captured
-    /// output). For reactive, capture-state-driven overlays, use `screenWatermark`.
+    /// For always-visible overlays, use SwiftUI's `.overlay`.
     func watermark<Overlay: View>(
         alignment: Alignment = .center,
         @ViewBuilder _ overlay: @escaping () -> Overlay

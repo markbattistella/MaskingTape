@@ -13,7 +13,7 @@ struct FullScreenShieldDemoView: View {
       VStack(alignment: .leading, spacing: 16) {
         header(
           title: "Whole-Screen Mask",
-          subtitle: "This tab applies .screenShield() at the NavigationStack level, so captured output is masked for the visible viewport even while scrolling."
+          subtitle: "This tab applies .secureCapture() at the NavigationStack level, so captured output is masked for the visible viewport even while scrolling."
         )
 
         ForEach(1...18, id: \.self) { index in

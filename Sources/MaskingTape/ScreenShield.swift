@@ -26,8 +26,9 @@ public extension View {
   ///
   /// ```swift
   /// TextField("CVV", text: $cvv)
-  ///     .screenShield()
+  ///     .secureCapture()
   /// ```
+  @available(*, deprecated, message: "Use secureCapture() instead.")
   func screenShield() -> some View {
     modifier(ScreenShieldModifier<EmptyView>(replacement: nil))
   }
@@ -45,13 +46,14 @@ public extension View {
   ///
   /// ```swift
   /// BankingView()
-  ///     .screenShield {
+  ///     .secureCapture {
   ///         Label("Content protected", systemImage: "lock.fill")
   ///             .foregroundStyle(.secondary)
   ///     }
   /// ```
   ///
   /// - Parameter replacement: The view shown in captured output on iOS.
+  @available(*, deprecated, message: "Use secureCapture { ... } instead.")
   func screenShield<Replacement: View>(
     @ViewBuilder replacement: @escaping () -> Replacement
   ) -> some View {
@@ -60,21 +62,20 @@ public extension View {
 
   // MARK: - Screen Watermark
 
-  /// Overlays a watermark view on this content when screen capture is detected.
+  /// Legacy capture-reactive watermark API.
   ///
   /// Unlike `screenShield()` this does **not** block capture — it overlays the
-  /// provided view on top of content during screenshots and screen recordings.
+  /// provided view on top of content during screen recordings and mirroring.
   ///
   /// **Platform notes:**
   /// - **iOS**: The watermark appears automatically when `UIScreen.isCaptured`
-  ///   becomes `true` (screenshots, Control Center recording, QuickTime, AirPlay).
+  ///   becomes `true` (Control Center recording, QuickTime, AirPlay mirroring).
   /// - **macOS**: macOS has no public API to detect capture state without
-  ///   requesting screen recording permission. Set `alwaysVisible: true` for a
-  ///   permanent branding watermark on macOS.
+  ///   requesting screen recording permission.
   ///
   /// ```swift
   /// DocumentView()
-  ///     .screenWatermark {
+  ///     .watermark {
   ///         Text("CONFIDENTIAL")
   ///             .font(.largeTitle.bold())
   ///             .foregroundStyle(.red.opacity(0.25))
@@ -83,13 +84,18 @@ public extension View {
   /// ```
   ///
   /// - Parameters:
-  ///   - alwaysVisible: When `true` the watermark shows regardless of capture
-  ///     state. Defaults to `false`.
+  ///   - alwaysVisible: Legacy option. Prefer `.watermark { ... }` for capture-only
+  ///     visibility, or native SwiftUI `.overlay { ... }` for always-visible UI.
   ///   - overlay: The watermark view to display.
+  @available(
+    *,
+    deprecated,
+    message: "Use watermark { ... } for capture-only watermarks, or SwiftUI overlay { ... } for always-visible overlays."
+  )
   func screenWatermark<Watermark: View>(
     alwaysVisible: Bool = false,
     @ViewBuilder overlay: @escaping () -> Watermark
   ) -> some View {
-    modifier(ScreenWatermarkModifier(alwaysVisible: alwaysVisible, overlay: overlay))
+    modifier(ScreenWatermarkModifier(alwaysVisible: alwaysVisible, alignment: .center, overlay: overlay))
   }
 }

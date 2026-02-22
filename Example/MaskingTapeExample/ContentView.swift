@@ -28,7 +28,7 @@ struct ContentView: View {
       NavigationStack {
         FullScreenShieldDemoView()
       }
-      .screenShield {
+      .secureCapture {
         FullScreenMaskOverlay()
       }
       .tabItem {

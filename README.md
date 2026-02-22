@@ -11,25 +11,15 @@
 
 </div>
 
-`MaskingTape` is a Swift package for capture protection and watermarking in SwiftUI.
+`MaskingTape` is a Swift package for capture protection and capture-aware watermarking in SwiftUI.
 
 It provides:
 
-- Secure capture masking for sensitive UI on iOS (screenshots, screen recordings, mirroring)
-- Window-level capture protection on macOS via `NSWindow.sharingType = .none`
-- Watermark overlays for full-screen or view-level branding
-- SwiftUI-first wrappers and modifiers for drop-in usage
-- Example patterns for full-screen masking and capture-reactive inset watermarks
-
-## How It Works (iOS)
-
-`MaskingTape` uses the well-known `UITextField.isSecureTextEntry` rendering side-effect.
-Content rendered inside the private secure container is visible in the live app but omitted from the system capture pipeline.
-
-That means:
-
-- Put sensitive content inside the secure container -> hidden from captures
-- Put a replacement overlay behind it -> replacement appears in the captured image/video
+- `secureCapture()` to hide sensitive views from screenshots/recordings/mirroring (platform dependent)
+- `secureCapture { replacement }` to show replacement UI in captured output on iOS
+- `watermark { overlay }` to show a watermark only while screen capture is active
+- macOS window-level capture protection via `NSWindow.sharingType = .none`
+- SwiftUI-first wrappers and modifiers with example patterns for full-screen usage
 
 ## Installation
 
@@ -43,9 +33,14 @@ dependencies: [
 
 Alternatively, add it using Xcode via `File > Add Packages` and entering the package repository URL.
 
-## Quick Start
+## How Capture Protection Works (iOS)
 
-Import the package:
+`MaskingTape` uses the `UITextField.isSecureTextEntry` rendering side-effect.
+Content hosted inside the private secure container remains visible in the live app, but iOS omits it from screenshots, screen recordings, and mirroring capture pipelines.
+
+When you provide a replacement overlay with `secureCapture { ... }`, that replacement is placed behind the secure content so it becomes visible in captured output.
+
+## Quick Start
 
 ```swift
 import MaskingTape
@@ -58,7 +53,7 @@ Text("4111 1111 1111 1111")
   .secureCapture()
 ```
 
-### Hide content and show a custom replacement in captures
+### Hide content and show replacement UI in captures
 
 ```swift
 CardView()
@@ -72,98 +67,103 @@ CardView()
   }
 ```
 
-### Add a watermark overlay
+### Capture-reactive watermark (recording / mirroring)
 
 ```swift
 DocumentView()
   .watermark {
     Text("CONFIDENTIAL")
       .font(.title.bold())
-      .foregroundStyle(.red.opacity(0.2))
+      .foregroundStyle(.red.opacity(0.22))
       .rotationEffect(.degrees(-30))
   }
 ```
 
-## Public API
+### Always-visible watermark (use SwiftUI directly)
 
-### Wrappers
+```swift
+DocumentView()
+  .overlay {
+    Text("CONFIDENTIAL")
+      .font(.title.bold())
+      .foregroundStyle(.red.opacity(0.22))
+      .rotationEffect(.degrees(-30))
+  }
+```
 
-- `SecureView` -> hides content from capture (optional captured-output overlay on iOS)
-- `WatermarkView` -> overlays visible watermark content
+## Public API (Simplified)
 
-### Modifiers
+### Capture Protection
 
 - `.secureCapture()`
-- `.secureCapture { overlay }`
+- `.secureCapture { replacement }`
+- `SecureView { ... }`
+
+### Capture-Reactive Watermark
+
 - `.watermark { overlay }`
+- `WatermarkView { ... }`
 
-### Compatibility Modifiers (existing API)
+`watermark` is intentionally capture-aware only. If you want a watermark that is always visible, use SwiftUI's built-in `.overlay`.
 
-- `.screenShield()`
-- `.screenShield { replacement }`
-- `.screenWatermark(alwaysVisible:overlay:)`
+## Full-Screen Usage (Scrolling Screens)
 
-`screenShield` is the existing capture-protection API and now uses the same internal secure primitive.
-
-## Full-Screen Patterns
-
-To ensure protection or watermarking applies to the visible screen while content scrolls, apply the modifier to a container like `NavigationStack`, not the inner `ScrollView` content:
+To keep protection/watermarking tied to the visible viewport while content scrolls, apply the modifier to the outer container (`NavigationStack`, `TabView`, etc.), not the inner `ScrollView` content:
 
 ```swift
 NavigationStack {
-  ScrollView { /* content */ }
+  ScrollView {
+    // content
+  }
 }
-.screenShield {
+.secureCapture {
   Color(uiColor: .systemBackground)
 }
 ```
 
-or:
-
 ```swift
 NavigationStack {
-  ScrollView { /* content */ }
+  ScrollView {
+    // content
+  }
 }
 .watermark {
   Text("MASKINGTAPE")
 }
 ```
 
-## Capture-Reactive Watermarks
-
-`screenWatermark` observes `UIScreen.capturedDidChangeNotification` on iOS/tvOS and shows an overlay when screen capture is active (recording/mirroring).
-
-```swift
-DocumentView()
-  .screenWatermark {
-    Text("RECORDED")
-      .foregroundStyle(.red.opacity(0.2))
-  }
-```
-
 ## Platform Notes
 
-- `iOS`: Secure capture masking supported using the secure text field container technique
-- `macOS`: Uses `NSWindow.sharingType = .none` (window-wide protection)
-- `tvOS`: Secure masking is not applied (UIKit internals differ); watermarking is available
-- `watchOS`: No screenshot-protection equivalent; watermarking APIs fall back to normal overlays
-- `visionOS`: Pass-through / unverified for secure masking behavior
+- `iOS`: `secureCapture` uses the secure text-field container technique; `watermark` reacts to `UIScreen.isCaptured`
+- `macOS`: `secureCapture` uses `NSWindow.sharingType = .none` (window-wide); capture state for reactive watermarking is not publicly available without extra permissions
+- `tvOS`: secure masking is not applied; capture-reactive watermarking is available
+- `watchOS`: watermark APIs fall back to always-hidden-unless-explicit behavior (no capture-state concept)
+- `visionOS`: secure masking behavior is unverified and currently treated conservatively
 
 ## Important Limitations
 
-- iOS does **not** provide a public API to intercept a screenshot before capture
-- `UIApplication.userDidTakeScreenshotNotification` fires **after** the screenshot is already taken
-- You cannot inject a watermark into the system screenshot at capture time after the fact
-- The iOS secure masking technique depends on private UIKit view hierarchy behavior and could change in a future OS release
+- iOS does not provide a public "will screenshot" callback
+- `UIApplication.userDidTakeScreenshotNotification` fires after the screenshot is already captured
+- You cannot insert a watermark into a system screenshot after the capture has occurred
+- The iOS secure masking technique depends on UIKit internals and may break if Apple changes the private view hierarchy
+
+## Legacy Compatibility APIs
+
+These remain available for migration but are deprecated:
+
+- `.screenShield()` -> use `.secureCapture()`
+- `.screenShield { ... }` -> use `.secureCapture { ... }`
+- `.screenWatermark(...)` -> use `.watermark { ... }` (capture-only) or SwiftUI `.overlay { ... }` (always visible)
 
 ## Example App
 
 The included example demonstrates:
 
-- View-level shielding (`screenShield`)
-- Reactive and always-on watermarks (`screenWatermark`)
-- Full-screen mask and full-screen watermark tabs
-- A bottom inset watermark pattern for active screen recording / mirroring
+- `secureCapture()` on individual views
+- `secureCapture { replacement }` with custom capture replacement content
+- Capture-reactive `.watermark { ... }`
+- Full-screen masking and full-screen watermarking on scrolling screens
+- A bottom inset watermark pattern for active recording / mirroring sessions
 
 ## Contributing
 

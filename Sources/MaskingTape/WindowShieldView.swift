@@ -23,7 +23,7 @@ import AppKit
 /// Because this property applies at the **window** level — not the view level —
 /// setting it on any one view protects the entire window. Developers should be
 /// aware that all content in the same NSWindow will be hidden from captures once
-/// any view in it applies `screenShield()`.
+/// any view in it applies `secureCapture()` (or the legacy `screenShield()`).
 struct WindowShieldView: NSViewRepresentable {
   func makeNSView(context: Context) -> ShieldNSView { ShieldNSView() }
   func updateNSView(_ nsView: ShieldNSView, context: Context) {}
