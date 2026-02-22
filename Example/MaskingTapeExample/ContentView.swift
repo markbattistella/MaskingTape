@@ -12,10 +12,10 @@ struct ContentView: View {
   var body: some View {
     TabView {
       NavigationStack {
-        ShieldDemoView()
+        MaskingTapeDemoView()
       }
       .tabItem {
-        Label("Shield", systemImage: "lock.shield.fill")
+        Label("Tape", systemImage: "lock.shield.fill")
       }
 
       NavigationStack {
@@ -26,13 +26,13 @@ struct ContentView: View {
       }
 
       NavigationStack {
-        FullScreenShieldDemoView()
+        FullScreenMaskingTapeDemoView()
       }
-      .secureCapture {
+      .maskingTape {
         FullScreenMaskOverlay()
       }
       .tabItem {
-        Label("Full Mask", systemImage: "rectangle.slash")
+        Label("Tape Mask", systemImage: "rectangle.slash")
       }
 
       NavigationStack {

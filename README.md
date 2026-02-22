@@ -13,10 +13,12 @@
 
 `MaskingTape` is a Swift package for capture protection and capture-aware watermarking in SwiftUI.
 
+The name comes from the old paper-era workflow: cover sensitive lines with masking tape, photocopy the page, and the copy shows the tape instead of the hidden text.
+
 It provides:
 
-- `secureCapture()` to hide sensitive views from screenshots/recordings/mirroring (platform dependent)
-- `secureCapture { replacement }` to show replacement UI in captured output on iOS
+- `maskingTape()` to hide sensitive views from screenshots/recordings/mirroring (platform dependent)
+- `maskingTape { replacement }` to show replacement UI in captured output on iOS (the "tape" visible in the copy)
 - `watermark { overlay }` to show a watermark only while screen capture is active
 - macOS window-level capture protection via `NSWindow.sharingType = .none`
 - SwiftUI-first wrappers and modifiers with example patterns for full-screen usage
@@ -38,7 +40,7 @@ Alternatively, add it using Xcode via `File > Add Packages` and entering the pac
 `MaskingTape` uses the `UITextField.isSecureTextEntry` rendering side-effect.
 Content hosted inside the private secure container remains visible in the live app, but iOS omits it from screenshots, screen recordings, and mirroring capture pipelines.
 
-When you provide a replacement overlay with `secureCapture { ... }`, that replacement is placed behind the secure content so it becomes visible in captured output.
+When you provide a replacement overlay with `maskingTape { ... }`, that replacement is placed behind the secure content so it becomes visible in captured output, like tape appearing on a photocopy.
 
 ## Quick Start
 
@@ -50,14 +52,14 @@ import MaskingTape
 
 ```swift
 Text("4111 1111 1111 1111")
-  .secureCapture()
+  .maskingTape()
 ```
 
 ### Hide content and show replacement UI in captures
 
 ```swift
 CardView()
-  .secureCapture {
+  .maskingTape {
     VStack(spacing: 8) {
       Image(systemName: "lock.fill")
       Text("Protected")
@@ -95,9 +97,9 @@ DocumentView()
 
 ### Capture Protection
 
-- `.secureCapture()`
-- `.secureCapture { replacement }`
-- `SecureView { ... }`
+- `.maskingTape()`
+- `.maskingTape { replacement }`
+- `MaskingTapeView { ... }`
 
 ### Capture-Reactive Watermark
 
@@ -116,7 +118,7 @@ NavigationStack {
     // content
   }
 }
-.secureCapture {
+.maskingTape {
   Color(uiColor: .systemBackground)
 }
 ```
@@ -134,8 +136,8 @@ NavigationStack {
 
 ## Platform Notes
 
-- `iOS`: `secureCapture` uses the secure text-field container technique; `watermark` reacts to `UIScreen.isCaptured`
-- `macOS`: `secureCapture` uses `NSWindow.sharingType = .none` (window-wide); capture state for reactive watermarking is not publicly available without extra permissions
+- `iOS`: `maskingTape` uses the secure text-field container technique; `watermark` reacts to `UIScreen.isCaptured`
+- `macOS`: `maskingTape` uses `NSWindow.sharingType = .none` (window-wide); capture state for reactive watermarking is not publicly available without extra permissions
 - `tvOS`: secure masking is not applied; capture-reactive watermarking is available
 - `watchOS`: watermark APIs fall back to always-hidden-unless-explicit behavior (no capture-state concept)
 - `visionOS`: secure masking behavior is unverified and currently treated conservatively
@@ -147,20 +149,12 @@ NavigationStack {
 - You cannot insert a watermark into a system screenshot after the capture has occurred
 - The iOS secure masking technique depends on UIKit internals and may break if Apple changes the private view hierarchy
 
-## Legacy Compatibility APIs
-
-These remain available for migration but are deprecated:
-
-- `.screenShield()` -> use `.secureCapture()`
-- `.screenShield { ... }` -> use `.secureCapture { ... }`
-- `.screenWatermark(...)` -> use `.watermark { ... }` (capture-only) or SwiftUI `.overlay { ... }` (always visible)
-
 ## Example App
 
 The included example demonstrates:
 
-- `secureCapture()` on individual views
-- `secureCapture { replacement }` with custom capture replacement content
+- `maskingTape()` on individual views
+- `maskingTape { replacement }` with custom capture replacement content
 - Capture-reactive `.watermark { ... }`
 - Full-screen masking and full-screen watermarking on scrolling screens
 - A bottom inset watermark pattern for active recording / mirroring sessions

@@ -12,18 +12,18 @@ import SwiftUI
 ///
 /// On iOS this uses the secure text-field container trick internally. The
 /// optional overlay is what appears in captured output.
-public struct SecureView<Content: View>: View {
+public struct MaskingTapeView<Content: View>: View {
 
     private let content: () -> Content
     private let overlay: () -> AnyView
 
-    /// Creates a secure view with the default capture replacement (`systemBackground` on iOS).
+    /// Creates a masking-tape view with the default capture replacement (`systemBackground` on iOS).
     public init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.overlay = { AnyView(defaultSecureCaptureOverlay()) }
     }
 
-    /// Creates a secure view with a custom overlay shown in captured output on iOS.
+    /// Creates a masking-tape view with custom "tape" shown in captured output on iOS.
     public init<Overlay: View>(
         @ViewBuilder content: @escaping () -> Content,
         @ViewBuilder overlay: @escaping () -> Overlay
@@ -38,7 +38,7 @@ public struct SecureView<Content: View>: View {
 #elseif os(macOS)
         // macOS capture protection is window-wide; overlay is ignored.
         content()
-            .background(WindowShieldView())
+            .background(WindowTapeView())
 #else
         content()
 #endif
@@ -81,21 +81,20 @@ public struct WatermarkView<Content: View, Overlay: View>: View {
 
 public extension View {
     
-    /// Hides this view from screenshots and screen recordings on supported platforms.
+    /// Applies masking tape to this view for screen captures.
     ///
     /// On iOS the default captured-output overlay is `systemBackground`.
-    func secureCapture() -> some View {
-        SecureView {
+    func maskingTape() -> some View {
+        MaskingTapeView {
             self
         }
     }
 
-    /// Hides this view from screenshots and screen recordings and shows a custom
-    /// overlay in captured output on iOS.
-    func secureCapture<Overlay: View>(
+    /// Applies masking tape to this view and shows a custom replacement in captured output on iOS.
+    func maskingTape<Overlay: View>(
         @ViewBuilder _ overlay: @escaping () -> Overlay
     ) -> some View {
-        SecureView(
+        MaskingTapeView(
             content: { self },
             overlay: overlay
         )
@@ -119,7 +118,7 @@ public extension View {
 // MARK: - Helpers
 
 @ViewBuilder
-/// Default replacement used by `.secureCapture()` when no overlay is supplied.
+/// Default "tape" used by `.maskingTape()` when no replacement is supplied.
 private func defaultSecureCaptureOverlay() -> some View {
 #if os(iOS)
     Color(uiColor: .systemBackground)

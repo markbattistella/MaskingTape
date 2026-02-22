@@ -8,7 +8,7 @@
 import SwiftUI
 import AppKit
 
-// MARK: - Window Shield (macOS)
+// MARK: - Window Tape (macOS)
 
 /// An invisible NSViewRepresentable that sets `sharingType = .none` on its host
 /// window the moment it enters the view hierarchy.
@@ -23,16 +23,16 @@ import AppKit
 /// Because this property applies at the **window** level — not the view level —
 /// setting it on any one view protects the entire window. Developers should be
 /// aware that all content in the same NSWindow will be hidden from captures once
-/// any view in it applies `secureCapture()` (or the legacy `screenShield()`).
-struct WindowShieldView: NSViewRepresentable {
-  func makeNSView(context: Context) -> ShieldNSView { ShieldNSView() }
-  func updateNSView(_ nsView: ShieldNSView, context: Context) {}
+/// any view in it applies `maskingTape()`.
+struct WindowTapeView: NSViewRepresentable {
+  func makeNSView(context: Context) -> TapeNSView { TapeNSView() }
+  func updateNSView(_ nsView: TapeNSView, context: Context) {}
 }
 
-// MARK: - ShieldNSView
+// MARK: - TapeNSView
 
-/// A zero-size NSView whose sole job is to shield the window when it joins one.
-final class ShieldNSView: NSView {
+/// A zero-size NSView whose sole job is to apply masking tape to the host window.
+final class TapeNSView: NSView {
   override func viewDidMoveToWindow() {
     super.viewDidMoveToWindow()
     window?.sharingType = .none

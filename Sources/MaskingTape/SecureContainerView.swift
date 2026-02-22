@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - Capture-Protected Primitive
 
-/// Internal primitive used by `SecureView` / `.secureCapture(...)`.
+/// Internal primitive used by `MaskingTapeView` / `.maskingTape(...)`.
 ///
 /// Content hosted inside the private secure container is visible in the live app
 /// and omitted from screenshots/recordings. The `overlay` is hosted in a normal

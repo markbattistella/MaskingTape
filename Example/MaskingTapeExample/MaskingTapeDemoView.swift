@@ -7,12 +7,12 @@
 import SwiftUI
 import MaskingTape
 
-/// Demonstrates view-level capture shielding with and without a replacement view.
-struct ShieldDemoView: View {
+/// Demonstrates the masking-tape capture metaphor with and without replacement "tape".
+struct MaskingTapeDemoView: View {
   var body: some View {
     List {
 
-      // MARK: - Basic shield
+      // MARK: - Basic tape
 
       Section {
         callout(
@@ -21,21 +21,21 @@ struct ShieldDemoView: View {
         )
 
         CardView()
-          .secureCapture()
+          .maskingTape()
 
       } header: {
-        Text("Basic Shield")
+        Text("Basic Tape")
       } footer: {
         Text(
           """
-          .secureCapture() embeds the view inside a UIKit secure text field layer. \
+          .maskingTape() embeds the view inside a UIKit secure text field layer. \
           iOS automatically excludes that layer from screenshots, Control Centre \
           recordings, QuickTime mirroring, and AirPlay output.
           """
         )
       }
 
-      // MARK: - Shield with replacement
+      // MARK: - Tape with replacement
 
       Section {
         callout(
@@ -44,7 +44,7 @@ struct ShieldDemoView: View {
         )
 
         CardView()
-          .secureCapture {
+          .maskingTape {
             HStack(spacing: 12) {
               Image(systemName: "lock.fill")
                 .font(.title2)
@@ -62,12 +62,12 @@ struct ShieldDemoView: View {
           }
 
       } header: {
-        Text("Shield with Replacement")
+        Text("Tape with Replacement")
       } footer: {
         Text(
           """
           The replacement view sits behind the secure layer in the live UI \
-          (covered by the opaque shield). When captured, the secure layer is \
+          (covered by the opaque tape). When captured, the secure layer is \
           excluded from the output and the replacement is revealed instead.
           """
         )
@@ -78,13 +78,13 @@ struct ShieldDemoView: View {
       Section {
         callout(
           icon: "exclamationmark.triangle",
-          message: "On macOS, secureCapture() sets the entire window's sharing type — all content in the window is protected, not just the modified view."
+          message: "On macOS, maskingTape() sets the entire window's sharing type — all content in the window is protected, not just the modified view."
         )
       } header: {
         Text("macOS Note")
       }
     }
-    .navigationTitle("secureCapture()")
+    .navigationTitle("maskingTape()")
     .exampleLargeNavTitle()
   }
 
@@ -159,6 +159,6 @@ private struct CardView: View {
 
 #Preview {
   NavigationStack {
-    ShieldDemoView()
+    MaskingTapeDemoView()
   }
 }

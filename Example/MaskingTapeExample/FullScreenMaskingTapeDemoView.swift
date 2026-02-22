@@ -6,14 +6,14 @@
 
 import SwiftUI
 
-/// Demonstrates screen-sized capture masking while scroll content moves underneath.
-struct FullScreenShieldDemoView: View {
+/// Demonstrates screen-sized masking tape while scroll content moves underneath.
+struct FullScreenMaskingTapeDemoView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
         header(
-          title: "Whole-Screen Mask",
-          subtitle: "This tab applies .secureCapture() at the NavigationStack level, so captured output is masked for the visible viewport even while scrolling."
+          title: "Whole-Screen Tape",
+          subtitle: "This tab applies .maskingTape() at the NavigationStack level, so captured output is taped over for the visible viewport even while scrolling."
         )
 
         ForEach(1...18, id: \.self) { index in
@@ -44,7 +44,7 @@ struct FullScreenShieldDemoView: View {
       .padding()
     }
     .background(groupedBackgroundColor)
-    .navigationTitle("Full-Screen Mask")
+    .navigationTitle("Full-Screen Tape")
     .exampleInlineNavTitle()
   }
 
@@ -70,7 +70,7 @@ struct FullScreenShieldDemoView: View {
   }
 }
 
-/// Capture replacement overlay shown when the full-screen shield is captured on iOS.
+/// Replacement "tape" shown when the full-screen masking demo is captured on iOS.
 struct FullScreenMaskOverlay: View {
   var body: some View {
     ZStack {

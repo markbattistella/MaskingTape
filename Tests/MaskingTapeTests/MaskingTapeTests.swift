@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - Compilation Tests
 //
-// Because ScreenShield is a UI library built on UIViewRepresentable /
+// Because MaskingTape is a UI library built on UIViewRepresentable /
 // NSViewRepresentable, meaningful behavioural tests require a running app
 // process and cannot run in a headless Swift Testing environment.
 //
@@ -21,66 +21,13 @@ import SwiftUI
 @MainActor
 struct MaskingTapeAPITests {
 
-  // MARK: screenShield()
-
-  @Test("screenShield() compiles on any View")
-  func screenShieldNoReplacement() {
-    let _ = Text("Sensitive")
-      .screenShield()
-  }
-
-  @Test("screenShield(replacement:) compiles with a ViewBuilder closure")
-  func screenShieldWithReplacement() {
-    let _ = Text("Sensitive")
-      .screenShield {
-        Text("Protected")
-      }
-  }
-
-  @Test("screenShield(replacement:) accepts complex view hierarchies")
-  func screenShieldWithComplexReplacement() {
-    let _ = VStack {
-      Text("Card number")
-      Text("1234 5678 9012 3456")
-    }
-    .screenShield {
-      Label("Content hidden for security", systemImage: "lock.fill")
-    }
-  }
-
-  // MARK: Legacy screenWatermark()
-
-  @Test("screenWatermark(overlay:) compiles with default alwaysVisible")
-  func screenWatermarkDefault() {
-    let _ = Text("Document")
-      .screenWatermark {
-        Text("CONFIDENTIAL")
-      }
-  }
-
-  @Test("screenWatermark(alwaysVisible:overlay:) compiles with explicit flag (legacy)")
-  func screenWatermarkAlwaysVisible() {
-    let _ = Text("Document")
-      .screenWatermark(alwaysVisible: true) {
-        Text("CONFIDENTIAL")
-      }
-  }
-
-  @Test("screenWatermark(alwaysVisible:overlay:) compiles when disabled (legacy)")
-  func screenWatermarkNotVisible() {
-    let _ = Text("Document")
-      .screenWatermark(alwaysVisible: false) {
-        Text("CONFIDENTIAL")
-      }
-  }
-
   // MARK: Chaining
 
-  @Test("secureCapture() and watermark() can be chained")
+  @Test("maskingTape() and watermark() can be chained")
   func chainedModifiers() {
-    // secureCapture prevents capture; watermark adds a capture-reactive brand mark.
+    // maskingTape prevents capture; watermark adds a capture-reactive brand mark.
     let _ = Text("Sensitive document")
-      .secureCapture()
+      .maskingTape()
       .watermark {
         Text("© Acme Corp")
           .foregroundStyle(.secondary)
@@ -93,7 +40,7 @@ struct MaskingTapeAPITests {
       Text("Name")
 
       Text("4111 1111 1111 1111")
-        .secureCapture {
+        .maskingTape {
           Text("Card number hidden")
         }
 
@@ -104,18 +51,18 @@ struct MaskingTapeAPITests {
     }
   }
 
-  // MARK: New API
+  // MARK: Primary API
 
-  @Test("secureCapture() compiles with default overlay")
-  func secureCaptureDefault() {
+  @Test("maskingTape() compiles with default overlay")
+  func maskingTapeDefault() {
     let _ = Text("Secret")
-      .secureCapture()
+      .maskingTape()
   }
 
-  @Test("secureCapture(overlay:) compiles with custom overlay")
-  func secureCaptureCustomOverlay() {
+  @Test("maskingTape(overlay:) compiles with custom overlay")
+  func maskingTapeCustomOverlay() {
     let _ = Text("Secret")
-      .secureCapture {
+      .maskingTape {
         Text("Protected")
       }
   }

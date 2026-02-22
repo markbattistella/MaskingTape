@@ -101,11 +101,11 @@ struct WatermarkDemoView: View {
       Section {
         callout(
           icon: "info.circle",
-          message: "You can chain both behaviors: secure the content and add a normal SwiftUI overlay to the replacement view."
+          message: "You can chain both behaviors: tape over sensitive content in captures and add a normal SwiftUI overlay to the replacement view."
         )
 
         DocumentView()
-          .secureCapture {
+          .maskingTape {
             // This replacement is what appears in the capture output.
             // Watermark it too for belt-and-suspenders coverage.
             Color.secondary.opacity(0.1)
