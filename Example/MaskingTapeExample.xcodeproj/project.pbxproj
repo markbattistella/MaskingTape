@@ -107,6 +107,9 @@
 				Base,
 			);
 			mainGroup = A38B5CC62F4AD84500C32840;
+			packageReferences = (
+				A38B5CF22F4ADC6C00C32840 /* XCLocalSwiftPackageReference ".." */,
+			);
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A38B5CD02F4AD84500C32840 /* Products */;
@@ -363,9 +366,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A38B5CF22F4ADC6C00C32840 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		A38B5CF02F4ADC6C00C32840 /* MaskingTape */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = A38B5CF22F4ADC6C00C32840 /* XCLocalSwiftPackageReference ".." */;
 			productName = MaskingTape;
 		};
 /* End XCSwiftPackageProductDependency section */

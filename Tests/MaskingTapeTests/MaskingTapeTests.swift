@@ -4,9 +4,14 @@
 // Website: https://markbattistella.com
 //
 
-import Testing
 import SwiftUI
+import Testing
+
 @testable import MaskingTape
+
+#if os(macOS)
+  import AppKit
+#endif
 
 // MARK: - Compilation Tests
 //
@@ -82,4 +87,29 @@ struct MaskingTapeAPITests {
         Text("CONFIDENTIAL")
       }
   }
+
+  #if os(macOS)
+    @Test("macOS window protection balances multiple attachments")
+    func macOSWindowProtectionBalancesMultipleAttachments() {
+      let window = NSWindow(
+        contentRect: .init(x: 0, y: 0, width: 100, height: 100),
+        styleMask: [],
+        backing: .buffered,
+        defer: false
+      )
+
+      WindowTapeRegistry.shared.attach(window)
+      #expect(window.sharingType == .none)
+      #expect(WindowTapeRegistry.shared.attachmentCount(for: window) == 1)
+
+      WindowTapeRegistry.shared.attach(window)
+      #expect(WindowTapeRegistry.shared.attachmentCount(for: window) == 2)
+
+      WindowTapeRegistry.shared.detach(window)
+      #expect(WindowTapeRegistry.shared.attachmentCount(for: window) == 1)
+
+      WindowTapeRegistry.shared.detach(window)
+      #expect(WindowTapeRegistry.shared.attachmentCount(for: window) == 0)
+    }
+  #endif
 }

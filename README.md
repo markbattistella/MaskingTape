@@ -29,11 +29,20 @@ Add `MaskingTape` to your Swift project using Swift Package Manager:
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/markbattistella/MaskingTape", from: "1.0.0")
+  .package(url: "https://github.com/markbattistella/MaskingTape", from: "26.2.22")
 ]
 ```
 
 Alternatively, add it using Xcode via `File > Add Packages` and entering the package repository URL.
+
+## Requirements
+
+- Swift 6.0+
+- iOS 17+
+- macOS 14+
+- tvOS 17+
+- watchOS 10+
+- visionOS 1+
 
 ## How Capture Protection Works (iOS)
 
@@ -137,10 +146,10 @@ NavigationStack {
 ## Platform Notes
 
 - `iOS`: `maskingTape` uses the secure text-field container technique; `watermark` reacts to `UIScreen.isCaptured`
-- `macOS`: `maskingTape` uses `NSWindow.sharingType = .none` (window-wide); capture state for reactive watermarking is not publicly available without extra permissions
-- `tvOS`: secure masking is not applied; capture-reactive watermarking is available
-- `watchOS`: watermark APIs fall back to always-hidden-unless-explicit behavior (no capture-state concept)
-- `visionOS`: secure masking behavior is unverified and currently treated conservatively
+- `macOS`: `maskingTape` uses `NSWindow.sharingType = .none` while protected views are attached; protection is window-wide, and capture state for reactive watermarking is not publicly available without extra permissions
+- `tvOS`: secure masking is not applied; capture-reactive watermarking is available through `UIScreen.isCaptured`
+- `watchOS`: secure masking is not applied, and `.watermark` remains hidden because there is no capture-state API
+- `visionOS`: secure masking behavior is unverified and currently treated conservatively; `.watermark` remains hidden because there is no capture-state API
 
 ## Important Limitations
 
